@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>SVA · Cellulant Kenya · Executive Intelligence Experience</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0b1727;
+      --card: rgba(15, 29, 48, 0.72);
+      --card-strong: rgba(18, 35, 57, 0.9);
+      --border: rgba(148, 163, 184, 0.13);
+      --text: #f3f7fb;
+      --muted: #94a6ba;
+      --soft: #c4d0dc;
+      --accent: #61d4c3;
+      --accent-soft: rgba(97, 212, 195, 0.10);
+      --accent-border: rgba(97, 212, 195, 0.25);
+      --danger: #ef8f8f;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 78% 12%, rgba(42, 94, 117, 0.16), transparent 28%),
+        radial-gradient(circle at 12% 82%, rgba(26, 79, 94, 0.10), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+    }
+
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    }
+
+    .glass-strong {
+      background: var(--card-strong);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .muted { color: var(--muted); }
+    .soft { color: var(--soft); }
+    .accent { color: var(--accent); }
+    .divider { border-color: var(--border); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: reveal 0.65s ease forwards;
+    }
+
+    .delay-1 { animation-delay: 0.08s; }
+    .delay-2 { animation-delay: 0.16s; }
+    .delay-3 { animation-delay: 0.24s; }
+    .delay-4 { animation-delay: 0.32s; }
+
+    @keyframes reveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .metric-value { letter-spacing: -0.04em; }
+
+    .signal-line {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .signal-line::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(97, 212, 195, 0.35);
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--accent-border);
+      background: var(--accent-soft);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .cta-button:hover {
+      background: rgba(97, 212, 195, 0.16);
+      border-color: rgba(97, 212, 195, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .access-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(42, 94, 117, 0.18), transparent 35%),
+        rgba(3, 9, 17, 0.97);
+      padding: 24px;
+    }
+
+    .access-box {
+      width: 100%;
+      max-width: 430px;
+      padding: 34px;
+      border-radius: 18px;
+    }
+
+    .access-input {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.035);
+      color: white;
+      outline: none;
+    }
+
+    .access-input:focus {
+      border-color: var(--accent-border);
+      box-shadow: 0 0 0 3px rgba(97, 212, 195, 0.05);
+    }
+
+    .access-button {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid var(--accent-border);
+      background: rgba(97, 212, 195, 0.12);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .access-error {
+      color: var(--danger);
+      font-size: 11px;
+      min-height: 16px;
+      margin-top: 8px;
+    }
+
+    .hidden { display: none !important; }
+
+    canvas { max-height: 270px; }
+
+    @media (max-width: 1024px) {
+      .desktop-grid { grid-template-columns: 1fr !important; }
+      .sticky-rail { position: relative !important; top: auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="accessOverlay" class="access-overlay">
+    <div class="access-box glass reveal">
+      <div class="eyebrow mb-4">Strategic Value Architect</div>
+      <h1 class="text-2xl font-semibold tracking-tight mb-3">Executive Intelligence</h1>
+      <p class="muted text-sm leading-6 mb-7">
+        This intelligence experience has been prepared specifically
+        for the intended recipient.
+      </p>
+
+      <input
+        id="accessKey"
+        type="password"
+        class="access-input"
+        placeholder="Enter access key"
+        autocomplete="off"
+      />
+
+      <div id="accessError" class="access-error"></div>
+
+      <button id="accessButton" class="access-button mt-2" onclick="unlockExperience()">
+        Access briefing
+      </button>
+
+      <div class="mt-6 pt-5 border-t divider">
+        <p class="text-[10px] muted leading-5">
+          Confidential · Prepared by SVA · Cellulant Kenya
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <main id="experience" class="hidden">
+
+    <header class="max-w-[1440px] mx-auto px-6 lg:px-10 pt-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div>
+          <div class="eyebrow mb-2">SVA · Executive Intelligence Experience</div>
+          <div class="text-xs muted" id="metaLine"></div>
+        </div>
+        <div class="text-xs muted">Confidential · Account-specific intelligence</div>
+      </div>
+    </header>
+
+
+    <section
+      class="max-w-[1440px] mx-auto px-6 lg:px-10 py-10 desktop-grid"
+      style="display:grid; grid-template-columns:minmax(0, 7fr) minmax(280px, 3fr); gap:32px;"
+    >
+
+      <div>
+        <section id="thesisSection" class="reveal"></section>
+
+        <section
+          id="heroMetrics"
+          class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-7 reveal delay-1"
+        ></section>
+
+        <section id="narrative" class="mt-8 space-y-5"></section>
+
+        <section id="briefingSection" class="mt-10 reveal"></section>
+      </div>
+
+
+      <aside class="sticky-rail" style="position:sticky;top:24px;height:max-content;">
+        <div id="rail" class="space-y-4 reveal delay-2"></div>
+      </aside>
+
+    </section>
+
+
+    <footer class="max-w-[1440px] mx-auto px-6 lg:px-10 pb-10 pt-5">
+      <div class="pt-6 border-t divider flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="text-[10px] muted">Strategic Value Architect · SVA</div>
+        <div class="text-[10px] muted">Confidential intelligence · Prepared specifically for this account</div>
+      </div>
+    </footer>
+
+  </main>
+
+
+  <script>
+
+    const SVA_CASE = {
+
+      company: "Cellulant Kenya",
+
+      recipient: "Peter O'Toole, Chief Executive Officer",
+
+      date: "10 November 2026",
+
+      presentationId: "SVA-CEL-2026-11",
+
+      accessKey: "LICENCEMAP",
+
+      briefingUrl: "#",
+
+
+      thesis: {
+
+        eyebrow: "Strategic signal",
+
+        title: "The compression paradox.",
+
+        statement:
+          "Cellulant cut its cost base to become leaner. The regulatory perimeter expanded in the same quarter. The two forces are now moving in opposite directions on the same P&L.",
+
+        subtext:
+          "The restructuring was designed to make the business cheaper to run. The regulation is making the business more expensive to prove. The efficiency gain and the compliance burden are not sequential. They are concurrent."
+
+      },
+
+
+      heroMetrics: [
+
+        {
+          label: "Workforce reduction",
+          value: "~20%",
+          note: "Restructuring to leaner, product-led model",
+          tone: "neutral"
+        },
+
+        {
+          label: "Cost per transaction",
+          value: ">60%",
+          note: "Tingg cost reduction achieved",
+          tone: "neutral"
+        },
+
+        {
+          label: "Licence categories",
+          value: "10",
+          note: "National Payment System Bill, 2026",
+          tone: "accent"
+        },
+
+        {
+          label: "Capital requirement range",
+          value: "KES 5M–250M",
+          note: "Multiple-licence capital stack rule applies",
+          tone: "neutral"
+        }
+
+      ],
+
+
+      narrative: [
+
+        {
+          type: "argument",
+
+          eyebrow: "01 · The Compression",
+
+          title: "The restructuring worked.",
+
+          body:
+            "A ~20% workforce reduction, a leaner product-led model, and a >60% cut in Tingg cost per transaction. The cost base is smaller. The organisation is flatter. The public narrative is cleaner: operational transparency, real-time compliance, data-led growth. By the internal measures of the turnaround, the compression is real."
+
+        },
+
+
+        {
+          type: "tension",
+
+          eyebrow: "02 · The Expansion",
+
+          title: "The regulation arrived in the same quarter.",
+
+          body:
+            "The National Payment System Bill, 2026 proposes ten licence categories, capital requirements from KES 5M to KES 250M, a multiple-licence capital stack rule (highest category plus 50% of each additional category), a one-year transition with no grandfathering, and a processor licence window running now to November 2026. Cellulant is not a single-licence business. It operates across merchant acquiring, gateways, payouts, and cross-border corridors. The Bill is not a fee increase. It is a balance-sheet restructuring event dressed as regulation—arriving in the same quarter as the leaner operating model's first board-grade proof point."
+
+        },
+
+
+        {
+          type: "signal",
+
+          eyebrow: "SVA signal",
+
+          items: [
+
+            "Compliance Surface Asymmetry: the cost base that was cut to improve efficiency is now the cost base that must carry an expanded compliance surface.",
+
+            "The leaner the organisation becomes, the heavier the proof burden it carries. The same team is asked to demonstrate a more complex business to the regulator, the board, and enterprise clients—simultaneously.",
+
+            "The efficiency gain and the compliance burden are concurrent, not sequential. They are moving in opposite directions on the same P&L."
+
+          ]
+
+        },
+
+
+        {
+          type: "chart",
+
+          eyebrow: "Market context",
+
+          title: "The market stopped rewarding growth. It started rewarding proof.",
+
+          description:
+            "African fintech revenue multiples compressed from 11.2x to 4.8x in three years. The market re-rated the sector before the Bill arrived. Source: industry data cited in the strategic briefing.",
+
+          chart: {
+
+            type: "bar",
+
+            labels: [
+              "2023",
+              "2026"
+            ],
+
+            datasets: [
+
+              {
+                label: "African fintech revenue multiple (x)",
+                data: [
+                  11.2,
+                  4.8
+                ]
+              }
+
+            ]
+
+          }
+
+        },
+
+
+        {
+          type: "comparison",
+
+          eyebrow: "The divergence",
+
+          title: "What the lean model must now prove.",
+
+          left: {
+
+            label: "The lean operating model",
+
+            items: [
+              "Workforce cut ~20% to a flatter structure",
+              "Cost per transaction cut >60% on Tingg",
+              "Product-led focus on core merchant profitability",
+              "New COO mandate: real-time compliance and operational visibility",
+              "New CFO mandate: make the financial story legible to the board"
+            ]
+
+          },
+
+          right: {
+
+            label: "The expanded compliance surface",
+
+            items: [
+              "10 licence categories under the Bill",
+              "Capital stack rule: highest category + 50% of each additional category",
+              "16% VAT on payment processing fees since July 2026",
+              "One-year transition. No grandfathering.",
+              "Processor licence window: now to November 2026"
+            ]
+
+          }
+
+        },
+
+
+        {
+          type: "evidence",
+
+          eyebrow: "Why this is difficult to dismiss",
+
+          title: "The evidence stack.",
+
+          body:
+            "Flutterwave quotes ~1.4% local. Paystack quotes 1.5% on M-Pesa. The aggregator layer is commoditising; price is no longer a moat. Cellulant's processor licence window runs now to November 2026—November is not a soft deadline in a slide deck. Kenya's cybersecurity workforce is estimated at 1,700–2,000 experts against a need of up to 50,000; the licence regime demands operational-resilience and open-finance skills that cannot be hired off the shelf. The new COO's mandate is explicitly real-time compliance and operational visibility. The new CFO's mandate is to make the financial story legible to the board.",
+
+          source:
+            "SVA analysis of the National Payment System Bill 2026, Cellulant public disclosures, and industry benchmarks."
+
+        },
+
+
+        {
+          type: "question",
+
+          eyebrow: "The executive question",
+
+          title:
+            "Is the leaner operating model actually more efficient—or has it shifted cost from headcount to compliance risk, at precisely the moment the market stopped rewarding growth and started rewarding proof?",
+
+          body:
+            "The executive who can answer that question with evidence before the November licence window closes does not just survive the Bill. He turns it into the filter that removes the bottom half of the market."
+
+        }
+
+      ],
+
+
+      rail: {
+
+        value: {
+
+          label: "Core signal",
+
+          value: "Compliance Surface Asymmetry",
+
+          note:
+            "The cost base compressed. The regulatory perimeter expanded. The two forces are moving in opposite directions on the same P&L."
+
+        },
+
+        decision: {
+
+          label: "Decision lens",
+
+          value: "Proof vs efficiency",
+
+          note:
+            "Separate the efficiency gain from the proof burden it now carries. The question is not whether the model is cheaper—it is whether it is more provable."
+
+        },
+
+        metric: {
+
+          label: "Licence window",
+
+          value: "Nov 2026",
+
+          note:
+            "The processor licence window runs now to November 2026. No grandfathering. One-year transition."
+
+        },
+
+        miniChart: {
+
+          enabled: true,
+
+          labels: [
+            "2023",
+            "2026"
+          ],
+
+          data: [
+            11.2,
+            4.8
+          ]
+
+        }
+
+      },
+
+
+      unresolvedQuestion: {
+
+        eyebrow: "What remains unresolved",
+
+        title:
+          "The full product-to-licence-category map, the capital stack model, and the reconciliation gap between the lean operating model and the expanded compliance surface.",
+
+        body:
+          "The Strategic Briefing contains the complete analysis: the Control Pack architecture, the contingency triggers, and the playbook for turning the Bill into a competitive moat rather than a balance-sheet liability."
+
+      },
+
+
+      briefing: {
+
+        eyebrow: "Strategic Briefing",
+
+        title: "The full SVA assessment goes further.",
+
+        body:
+          "The private Strategic Briefing expands the account-specific evidence, the licence-map model, and the strategic implications behind the compliance surface asymmetry identified above—including the Control Pack architecture, the outcome-linked reconciliation revenue model, and the contingency triggers that convert the November window into a competitive filter.",
+
+        ctaLabel: "View your Strategic Briefing",
+
+        ctaUrl: "#",
+
+        conversationLabel: "Request a 20-minute conversation",
+
+        conversationEmail: "oderoian.sva@gmail.com"
+
+      }
+
+    };
+
+
+    function escapeHTML(value) {
+      if (value === undefined || value === null) return "";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    function renderThesis() {
+      const t = SVA_CASE.thesis;
+      document.getElementById("thesisSection").innerHTML = `
+        <div class="max-w-4xl">
+          <div class="eyebrow mb-4">${escapeHTML(t.eyebrow)}</div>
+          <h1 class="text-4xl md:text-5xl lg:text-[58px] leading-[1.02] tracking-[-0.045em] font-semibold">
+            ${escapeHTML(t.title)}
+          </h1>
+          <p class="mt-6 text-lg md:text-xl leading-8 soft max-w-3xl">
+            ${escapeHTML(t.statement)}
+          </p>
+          <p class="mt-4 text-sm leading-7 muted max-w-2xl">
+            ${escapeHTML(t.subtext)}
+          </p>
+        </div>
+      `;
+    }
+
+
+    function renderHeroMetrics() {
+      const container = document.getElementById("heroMetrics");
+      container.innerHTML = "";
+      SVA_CASE.heroMetrics.forEach(metric => {
+        const tone = metric.tone === "accent" ? "accent" : "text-white";
+        container.innerHTML += `
+          <div class="glass rounded-xl p-5">
+            <div class="text-[10px] uppercase tracking-[0.14em] muted">
+              ${escapeHTML(metric.label)}
+            </div>
+            <div class="metric-value text-2xl md:text-3xl font-semibold mt-3 ${tone}">
+              ${escapeHTML(metric.value)}
+            </div>
+            <div class="text-[11px] muted mt-2">
+              ${escapeHTML(metric.note)}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+
+    function renderBlock(block, index) {
+      switch (block.type) {
+        case "argument": return renderArgument(block, index);
+        case "tension": return renderTension(block, index);
+        case "signal": return renderSignal(block, index);
+        case "chart": return renderChartBlock(block, index);
+        case "metric": return renderMetricBlock(block, index);
+        case "comparison": return renderComparison(block, index);
+        case "timeline": return renderTimeline(block, index);
+        case "opportunity": return renderOpportunity(block, index);
+        case "question": return renderQuestion(block, index);
+        case "evidence": return renderEvidence(block, index);
+        default: return "";
+      }
+    }
+
+
+    function renderArgument(block, index) {
+      return `
+        <article class="glass rounded-2xl p-7 md:p-8 reveal">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || `Observation ${index + 1}`)}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <p class="mt-4 text-sm md:text-[15px] leading-7 soft max-w-3xl">${escapeHTML(block.body)}</p>
+        </article>
+      `;
+    }
+
+
+    function renderTension(block) {
+      return `
+        <article class="rounded-2xl p-7 md:p-8"
+          style="background:rgba(97,212,195,0.045);border:1px solid rgba(97,212,195,0.16);">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Strategic tension")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <p class="mt-4 text-sm md:text-[15px] leading-7 soft max-w-3xl">${escapeHTML(block.body)}</p>
+        </article>
+      `;
+    }
+
+
+    function renderSignal(block) {
+      return `
+        <article class="glass rounded-2xl p-7 md:p-8">
+          <div class="eyebrow mb-5">${escapeHTML(block.eyebrow || "Signal")}</div>
+          <div class="space-y-5">
+            ${(block.items || []).map(item => `
+              <div class="signal-line">
+                <p class="text-sm md:text-[15px] leading-7 soft">${escapeHTML(item)}</p>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `;
+    }
+
+
+    function renderChartBlock(block, index) {
+      const canvasId = `chart-${index}`;
+      setTimeout(() => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        new Chart(canvas, {
+          type: block.chart.type || "line",
+          data: {
+            labels: block.chart.labels,
+            datasets: block.chart.datasets.map((dataset, datasetIndex) => ({
+              label: dataset.label,
+              data: dataset.data,
+              borderColor: datasetIndex === 0 ? "#61d4c3" : "rgba(148,163,184,0.55)",
+              backgroundColor: datasetIndex === 0 ? "rgba(97,212,195,0.28)" : "rgba(148,163,184,0.12)",
+              borderWidth: 2,
+              pointRadius: 3,
+              pointHoverRadius: 5,
+              tension: 0.35,
+              fill: datasetIndex === 0 && block.chart.type !== "bar"
+            }))
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#94a6ba",
+                  font: { family: "Inter", size: 10 }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: "#708298" },
+                grid: { color: "rgba(148,163,184,0.06)" }
+              },
+              y: {
+                ticks: { color: "#708298" },
+                grid: { color: "rgba(148,163,184,0.06)" }
+              }
+            }
+          }
+        });
+      }, 50);
+      return `
+        <article class="glass rounded-2xl p-7 md:p-8">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Performance")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <p class="text-sm muted leading-6 mt-3 max-w-2xl">${escapeHTML(block.description || "")}</p>
+          <div class="mt-7 h-[270px]"><canvas id="${canvasId}"></canvas></div>
+        </article>
+      `;
+    }
+
+
+    function renderMetricBlock(block) {
+      return `
+        <article class="glass rounded-2xl p-7">
+          <div class="eyebrow mb-4">${escapeHTML(block.eyebrow || "Metric")}</div>
+          <div class="text-4xl font-semibold tracking-tight">${escapeHTML(block.value)}</div>
+          <h2 class="text-lg font-semibold mt-4">${escapeHTML(block.title)}</h2>
+          <p class="text-sm muted leading-7 mt-3 max-w-2xl">${escapeHTML(block.body)}</p>
+        </article>
+      `;
+    }
+
+
+    function renderComparison(block) {
+      return `
+        <article class="glass rounded-2xl p-7 md:p-8">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Comparison")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <div class="grid md:grid-cols-2 gap-4 mt-7">
+            <div class="rounded-xl p-5" style="background:rgba(255,255,255,0.025);border:1px solid var(--border);">
+              <div class="text-xs font-semibold mb-4">${escapeHTML(block.left.label)}</div>
+              <div class="space-y-3">
+                ${block.left.items.map(item => `
+                  <div class="text-sm muted leading-6">${escapeHTML(item)}</div>
+                `).join("")}
+              </div>
+            </div>
+            <div class="rounded-xl p-5" style="background:rgba(97,212,195,0.04);border:1px solid rgba(97,212,195,0.14);">
+              <div class="text-xs font-semibold mb-4">${escapeHTML(block.right.label)}</div>
+              <div class="space-y-3">
+                ${block.right.items.map(item => `
+                  <div class="text-sm muted leading-6">${escapeHTML(item)}</div>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+
+    function renderTimeline(block) {
+      return `
+        <article class="glass rounded-2xl p-7 md:p-8">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Timeline")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <div class="mt-7 space-y-5">
+            ${(block.items || []).map(item => `
+              <div class="flex gap-5">
+                <div class="w-[72px] shrink-0 text-xs font-semibold accent">${escapeHTML(item.period)}</div>
+                <div>
+                  <div class="text-sm font-semibold">${escapeHTML(item.title)}</div>
+                  <p class="text-sm muted leading-6 mt-1">${escapeHTML(item.body)}</p>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `;
+    }
+
+
+    function renderOpportunity(block) {
+      return `
+        <article class="rounded-2xl p-7 md:p-8"
+          style="background:linear-gradient(135deg,rgba(97,212,195,0.09),rgba(15,29,48,0.65));border:1px solid rgba(97,212,195,0.15);">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Strategic opportunity")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight">${escapeHTML(block.title)}</h2>
+          <p class="mt-4 text-sm md:text-[15px] leading-7 soft max-w-3xl">${escapeHTML(block.body)}</p>
+        </article>
+      `;
+    }
+
+
+    function renderQuestion(block) {
+      return `
+        <article class="glass-strong rounded-2xl p-7 md:p-8">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Executive question")}</div>
+          <h2 class="text-xl md:text-2xl font-semibold tracking-tight leading-8">${escapeHTML(block.title)}</h2>
+          <p class="mt-4 text-sm leading-7 muted max-w-3xl">${escapeHTML(block.body)}</p>
+        </article>
+      `;
+    }
+
+
+    function renderEvidence(block) {
+      return `
+        <article class="glass rounded-2xl p-7">
+          <div class="eyebrow mb-3">${escapeHTML(block.eyebrow || "Evidence")}</div>
+          <h2 class="text-xl font-semibold">${escapeHTML(block.title)}</h2>
+          <p class="text-sm muted leading-7 mt-4">${escapeHTML(block.body)}</p>
+          ${block.source ? `
+            <div class="mt-5 pt-4 border-t divider">
+              <div class="text-[10px] uppercase tracking-[0.12em] muted">Source</div>
+              <div class="text-xs soft mt-2">${escapeHTML(block.source)}</div>
+            </div>
+          ` : ""}
+        </article>
+      `;
+    }
+
+
+    function renderRail() {
+      const r = SVA_CASE.rail;
+      document.getElementById("rail").innerHTML = `
+        <div class="glass rounded-2xl p-6">
+          <div class="eyebrow mb-3">${escapeHTML(r.value.label)}</div>
+          <div class="text-xl font-semibold tracking-tight">${escapeHTML(r.value.value)}</div>
+          <p class="text-xs muted leading-6 mt-3">${escapeHTML(r.value.note)}</p>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="eyebrow mb-3">${escapeHTML(r.decision.label)}</div>
+          <div class="text-lg font-semibold">${escapeHTML(r.decision.value)}</div>
+          <p class="text-xs muted leading-6 mt-3">${escapeHTML(r.decision.note)}</p>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="eyebrow mb-3">${escapeHTML(r.metric.label)}</div>
+          <div class="text-3xl font-semibold metric-value accent">${escapeHTML(r.metric.value)}</div>
+          <p class="text-xs muted leading-6 mt-3">${escapeHTML(r.metric.note)}</p>
+        </div>
+
+        ${r.miniChart && r.miniChart.enabled ? `
+          <div class="glass rounded-2xl p-6">
+            <div class="eyebrow mb-4">Multiple compression</div>
+            <div class="h-[150px]"><canvas id="miniChart"></canvas></div>
+          </div>
+        ` : ""}
+
+        <div class="rounded-2xl p-6"
+          style="background:rgba(97,212,195,0.045);border:1px solid rgba(97,212,195,0.14);">
+          <div class="eyebrow mb-3">${escapeHTML(SVA_CASE.unresolvedQuestion.eyebrow)}</div>
+          <div class="text-sm font-semibold leading-6">${escapeHTML(SVA_CASE.unresolvedQuestion.title)}</div>
+          <p class="text-xs muted leading-6 mt-3">${escapeHTML(SVA_CASE.unresolvedQuestion.body)}</p>
+        </div>
+      `;
+
+      if (r.miniChart && r.miniChart.enabled) {
+        const ctx = document.getElementById("miniChart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: r.miniChart.labels,
+            datasets: [{
+              data: r.miniChart.data,
+              borderColor: "#61d4c3",
+              backgroundColor: "rgba(97,212,195,0.07)",
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+      }
+    }
+
+
+    function renderBriefing() {
+      const b = SVA_CASE.briefing;
+      document.getElementById("briefingSection").innerHTML = `
+        <div class="rounded-2xl p-8 md:p-10"
+          style="background:linear-gradient(135deg,rgba(20,42,61,0.92),rgba(8,18,31,0.95));border:1px solid rgba(97,212,195,0.15);">
+          <div class="eyebrow mb-4">${escapeHTML(b.eyebrow)}</div>
+          <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">${escapeHTML(b.title)}</h2>
+          <p class="mt-4 text-sm md:text-[15px] leading-7 soft max-w-3xl">${escapeHTML(b.body)}</p>
+
+          <div class="mt-7">
+            <a href="${escapeHTML(b.ctaUrl)}" class="cta-button">
+              ${escapeHTML(b.ctaLabel)} <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <div class="mt-8 pt-7 border-t divider">
+            <div class="text-xs muted mb-3">Prefer to discuss the assessment directly?</div>
+            <a href="mailto:${escapeHTML(b.conversationEmail)}?subject=SVA%20%E2%80%94%2020-minute%20conversation"
+              class="cta-button">
+              ${escapeHTML(b.conversationLabel)} <span aria-hidden="true">→</span>
+            </a>
+            <div class="mt-3 text-xs muted">${escapeHTML(b.conversationEmail)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+
+    function renderMeta() {
+      document.getElementById("metaLine").innerHTML = `
+        ${escapeHTML(SVA_CASE.company)}
+        <span class="mx-2 opacity-40">·</span>
+        ${escapeHTML(SVA_CASE.recipient)}
+        <span class="mx-2 opacity-40">·</span>
+        ${escapeHTML(SVA_CASE.date)}
+      `;
+    }
+
+
+    function initializeExperience() {
+      renderMeta();
+      renderThesis();
+      renderHeroMetrics();
+      const narrative = document.getElementById("narrative");
+      narrative.innerHTML = "";
+      SVA_CASE.narrative.forEach((block, index) => {
+        narrative.innerHTML += renderBlock(block, index);
+      });
+      renderRail();
+      renderBriefing();
+    }
+
+
+    function unlockExperience() {
+      const entered = document.getElementById("accessKey").value;
+      const error = document.getElementById("accessError");
+      if (entered === SVA_CASE.accessKey) {
+        document.getElementById("accessOverlay").classList.add("hidden");
+        document.getElementById("experience").classList.remove("hidden");
+        initializeExperience();
+      } else {
+        error.textContent = "Access key not recognised.";
+      }
+    }
+
+
+    document.getElementById("accessKey").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        unlockExperience();
+      }
+    });
+
+  </script>
+
+</body>
+</html>
